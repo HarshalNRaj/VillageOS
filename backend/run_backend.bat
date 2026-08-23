@@ -1,0 +1,6 @@
+@echo off
+echo Installing required dependencies...
+python -m pip install -r requirements.txt
+echo Starting VillageOS Lite Backend...
+python -m uvicorn main:app --reload
+pause
