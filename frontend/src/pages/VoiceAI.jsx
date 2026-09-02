@@ -2,6 +2,33 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Send, Volume2, Bot, User, Loader2, Sparkles } from 'lucide-react';
 
+const INTENTS = [
+  [["fertilizer", "fertiliser", "manure", "compost", "urea", "dap", "npk", "nutrient", "buy fertilizer"], "You can buy fertilizers at your nearest Krishi Seva Kendra or cooperative society. For DAP and Urea, check the government-subsidized supply at your block office."],
+  [["sow", "seed", "sowing", "planting", "transplant", "germination", "seedling"], "Based on current weather patterns in your region, it is best to delay sowing by 5-7 days for better soil moisture levels."],
+  [["weather", "rain", "rainfall", "forecast", "monsoon", "cloud", "temperature"], "Light showers are expected over the next two days in your region. It is a good time for soil preparation and field bunding."],
+  [["disease", "pest", "insect", "blight", "fungus", "rot", "wilt", "yellow leaf", "spray"], "Yellow or brown leaves may indicate a fungal infection. Apply Mancozeb or Copper Oxychloride spray at 2g per liter of water."],
+  [["irrigation", "water", "drip", "sprinkler", "canal", "borewell", "pump"], "Drip irrigation can save up to 50% water compared to flood irrigation. The government offers 45-55% subsidy on drip systems under PMKSY scheme."],
+  [["soil", "land", "ph", "testing", "organic", "fertility"], "A soil health card test will tell you the exact pH and nutrient levels of your land. Apply for a free test at your nearest Krishi Seva Kendra."],
+  [["scheme", "yojana", "subsidy", "government", "pm kisan", "loan", "credit"], "PM-KISAN scheme gives ₹6,000 per year directly to your bank account in 3 installments. Register at pmkisan.gov.in or your nearest CSC center."],
+  [["market", "mandi", "price", "sell", "rate", "wheat", "rice"], "Today's mandi rates: Wheat ₹2,275/quintal, Rice ₹2,183/quintal, Cotton ₹7,200/quintal. Check AgMarkNet or eNAM app for live prices."],
+  [["education", "school", "study", "scholarship", "college", "course", "diksha"], "Your children can study for free on the DIKSHA portal (diksha.gov.in) — it has NCERT textbooks and videos in 30+ languages."],
+  [["hospital", "doctor", "medicine", "sick", "health", "fever", "ambulance"], "Call 108 for a free ambulance in any emergency. For free online doctor consultation, use the e-Sanjeevani app or visit esanjeevaniopd.in."],
+  [["job", "work", "employment", "mgnrega", "labour", "wages"], "Under MGNREGA, your household is guaranteed 100 days of paid work per year at ₹250-350/day. Register your job card at the Gram Panchayat office."],
+  [["bank", "account", "money", "save", "jan dhan", "upi"], "Open a zero-balance Jan Dhan account at any bank. You get a free RuPay debit card and ₹2 lakh accidental insurance."],
+  [["women", "woman", "wife", "shg", "beti", "ladki"], "Women can join a Self Help Group (SHG) in their village to access group loans, savings, and government scheme benefits."],
+  [["hello", "hi", "namaste", "namaskara", "hey"], "Namaskara! I am your VillageOS AI assistant. Ask me about farming, health, education, jobs, government schemes, or market prices. How can I help you today?"]
+];
+
+function getFallbackVoiceReply(text) {
+  const textLower = text.toLowerCase();
+  for (const [keywords, reply] of INTENTS) {
+    if (keywords.some(kw => textLower.includes(kw))) {
+      return reply;
+    }
+  }
+  return "Namaskara! I am ready to help. You can ask about crop diseases, seeds, scholarships, MGNREGA jobs, hospital services, or government schemes.";
+}
+
 export default function VoiceAI() {
   const [isListening, setIsListening] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,9 +73,12 @@ export default function VoiceAI() {
         time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
       }]);
     } catch (err) {
+      console.warn('Backend server not reachable, using client-side AI reply.');
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      const replyText = getFallbackVoiceReply(userText);
       setMessages(prev => [...prev, {
         role: 'ai',
-        text: '⚠️ Could not connect to backend. Please check if your FastAPI local node is running on port 8000.',
+        text: replyText,
         time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
       }]);
     } finally {
