@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 import random
+import re
 
 router = APIRouter()
 
@@ -10,6 +11,14 @@ class VoiceQuery(BaseModel):
 
 # Intent map: list of (keywords, list of replies)
 INTENTS = [
+    # Engineering / Internships / Students
+    (
+        ["internship", "intern", "engineering", "engineer", "college", "graduate", "fresher", "career", "it job", "tech", "student", "opportunity"],
+        [
+            "For engineering students: Check the AICTE Internship Portal (internship.aicte-india.org) for Govt & private internships. You can also explore free certifications on NPTEL/SWAYAM and check the Employment Hub module in VillageOS for active job listings!",
+            "Great to hear from an engineering student! Apply for Govt internships on National Internship Portal (AICTE/MHRD), Digital India Internship Scheme, and check software/core engineering roles on the AICTE portal."
+        ]
+    ),
     # Fertilizers / nutrients
     (
         ["fertilizer", "fertiliser", "manure", "compost", "urea", "dap", "npk", "nutrient", "buy fertilizer", "where can i buy"],
@@ -93,7 +102,7 @@ INTENTS = [
     ),
     # Education
     (
-        ["education", "school", "study", "scholarship", "college", "learning", "course", "children study", "fees", "book", "tuition", "digital", "diksha", "swayam", "learn", "student"],
+        ["education", "school", "study", "scholarship", "course", "children study", "fees", "book", "tuition", "digital", "diksha", "swayam", "learn"],
         [
             "Your children can study for free on the DIKSHA portal (diksha.gov.in) — it has NCERT textbooks and videos in 30+ languages including Kannada and Hindi.",
             "Apply for a scholarship through the National Scholarship Portal at scholarships.gov.in. SC/ST/OBC and minority students can get up to ₹75,000/year support.",
@@ -104,7 +113,7 @@ INTENTS = [
     ),
     # Healthcare / hospital / medicine
     (
-        ["hospital", "doctor", "medicine", "sick", "health", "fever", "treatment", "disease", "pain", "ill", "pharmacy", "clinic", "ambulance", "emergency", "pregnant", "delivery", "baby", "child health", "mental health", "depression", "anxiety"],
+        ["hospital", "doctor", "medicine", "sick", "health", "fever", "treatment", "pain", "ill", "pharmacy", "clinic", "ambulance", "emergency", "pregnant", "delivery", "baby", "child health", "mental health"],
         [
             "Call 108 for a free ambulance in any emergency. For free online doctor consultation, use the e-Sanjeevani app or visit esanjeevaniopd.in — available in Hindi and regional languages.",
             "Jan Aushadhi Kendras sell generic medicines at 50-90% cheaper prices than branded ones. There are 10,000+ outlets across India. Ask at your nearest government hospital.",
@@ -125,7 +134,7 @@ INTENTS = [
     ),
     # Banking / finance / money
     (
-        ["bank", "account", "money", "save", "savings", "jan dhan", "atm", "transfer", "upi", "payment", "insurance", "jeevan jyoti", "suraksha bima", "mudra", "loan", "finance"],
+        ["bank", "account", "money", "save", "savings", "jan dhan", "atm", "transfer", "upi", "payment", "jeevan jyoti", "suraksha bima", "mudra", "loan", "finance"],
         [
             "Open a zero-balance Jan Dhan account at any bank. You get a free RuPay debit card, ₹2 lakh accidental insurance, and overdraft facility of up to ₹10,000.",
             "PM Jeevan Jyoti Bima Yojana gives ₹2 lakh life insurance for just ₹436 per year (about ₹36/month). Enroll through your bank account — no medical tests needed.",
@@ -143,11 +152,11 @@ INTENTS = [
             "Widows and single women can apply for National Family Benefit Scheme (₹20,000 one-time) and widow pension at their block office. Bring Aadhaar, bank passbook, and death certificate.",
         ]
     ),
-    # Greetings / hello
+    # Greetings / hello (AT THE END)
     (
         ["hello", "hi", "namaste", "namaskara", "hey", "good morning", "good evening", "how are you"],
         [
-            "Namaskara! I am your VillageOS AI assistant. Ask me about farming, health, education, jobs, government schemes, or market prices. How can I help you today?",
+            "Namaskara! I am your VillageOS AI assistant. Ask me about farming, health, education, engineering internships, jobs, government schemes, or market prices. How can I help you today?",
             "Hello! I am here to help with agriculture, healthcare, education, livelihood, market prices, and government schemes. What would you like to know?",
             "Namaste! I am ready to help. You can ask about seeds, medicines, scholarships, jobs, crop disease, or anything else. How can I assist you?",
         ]
@@ -172,8 +181,14 @@ FALLBACK_REPLIES = [
 def get_reply(text: str) -> str:
     text_lower = text.lower()
     for keywords, replies in INTENTS:
-        if any(kw in text_lower for kw in keywords):
-            return random.choice(replies)
+        for kw in keywords:
+            is_match = (
+                bool(re.search(r'\b' + re.escape(kw) + r'\b', text_lower))
+                if (len(kw) <= 3 and ' ' not in kw)
+                else (kw in text_lower)
+            )
+            if is_match:
+                return random.choice(replies)
     return random.choice(FALLBACK_REPLIES)
 
 
@@ -184,3 +199,4 @@ async def process_voice_query(query: VoiceQuery):
         "reply": reply,
         "language_detected": query.language
     }
+

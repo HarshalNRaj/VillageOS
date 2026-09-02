@@ -5,7 +5,7 @@ import { Mic, MicOff, Send, Volume2, Bot, User, Loader2, Sparkles } from 'lucide
 const INTENTS = [
   // Engineering / Tech / Internships
   [
-    ["internship", "intern", "engineering", "engineer", "college", "graduate", "fresher", "career", "it job", "tech", "student"],
+    ["internship", "intern", "engineering", "engineer", "college", "graduate", "fresher", "career", "it job", "tech", "student", "opportunity"],
     "For engineering students: Check the AICTE Internship Portal (internship.aicte-india.org) for Govt & private internships. You can also explore free certifications on NPTEL/SWAYAM and check the Employment Hub module in VillageOS for active job listings!"
   ],
   // Jobs / employment
