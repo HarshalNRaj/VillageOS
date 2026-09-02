@@ -5,12 +5,14 @@ import { Mic, MicOff, Send, Volume2, Bot, User, Loader2, Sparkles } from 'lucide
 const INTENTS = [
   // Engineering / Tech / Internships
   [
-    ["internship", "intern", "engineering", "engineer", "college", "graduate", "fresher", "career", "it job", "tech", "student", "opportunity"],
-    "For engineering students: Check the AICTE Internship Portal (internship.aicte-india.org) for Govt & private internships. You can also explore free certifications on NPTEL/SWAYAM and check the Employment Hub module in VillageOS for active job listings!"
+    [
+      "internship", "internships", "intern", "intership", "engineering", "engineer", "enginering", "engg", "btech", "b.tech", "be", "b.e", "diploma", "college", "graduate", "fresher", "career", "it job", "tech", "student", "students", "opportunity", "opportunities", "oppurtunity", "oppurtunities"
+    ],
+    "For engineering & technical students: You can apply for Govt & private internships on the AICTE Internship Portal (internship.aicte-india.org) and Digital India Internship Scheme. Check out free certifications on NPTEL/SWAYAM and explore active vacancies in the Employment Hub module of VillageOS!"
   ],
   // Jobs / employment
   [
-    ["job", "work", "employment", "mgnrega", "labour", "wages", "vacancy", "hire", "recruitment"],
+    ["job", "jobs", "work", "employment", "mgnrega", "labour", "wages", "vacancy", "vacancies", "hire", "recruitment"],
     "Check the Employment Hub tab in VillageOS for local rural & urban vacancies! For rural guaranteed employment, MGNREGA offers 100 days of work per year at ₹250-350/day."
   ],
   // Fertilizers / nutrients
@@ -20,7 +22,7 @@ const INTENTS = [
   ],
   // Seeds / sowing
   [
-    ["sow", "seed", "sowing", "planting", "transplant", "germination", "seedling"],
+    ["sow", "seed", "seeds", "sowing", "planting", "transplant", "germination", "seedling"],
     "Based on current weather patterns in your region, it is best to delay sowing by 5-7 days for better soil moisture levels."
   ],
   // Weather / rain
@@ -45,7 +47,7 @@ const INTENTS = [
   ],
   // Government schemes
   [
-    ["scheme", "yojana", "subsidy", "government", "pm kisan", "loan", "credit"],
+    ["scheme", "schemes", "yojana", "subsidy", "government", "pm kisan", "loan", "credit"],
     "PM-KISAN scheme gives ₹6,000 per year directly to your bank account in 3 installments. Register at pmkisan.gov.in or your nearest CSC center."
   ],
   // Market / price / mandi
@@ -55,7 +57,7 @@ const INTENTS = [
   ],
   // Education / Study
   [
-    ["education", "school", "study", "scholarship", "course", "diksha"],
+    ["education", "school", "study", "scholarship", "scholarships", "course", "diksha"],
     "Students can access free NCERT books & lectures on DIKSHA portal (diksha.gov.in) and national scholarships on scholarships.gov.in."
   ],
   // Healthcare / hospital
@@ -125,6 +127,21 @@ export default function VoiceAI() {
     setInputText('');
     setIsLoading(true);
 
+    // If running on static host (GitHub Pages or HTTPS), respond instantly client-side
+    const isStaticHosted = window.location.protocol === 'https:' || window.location.hostname !== 'localhost';
+
+    if (isStaticHosted) {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      const replyText = getFallbackVoiceReply(userText);
+      setMessages(prev => [...prev, {
+        role: 'ai',
+        text: replyText,
+        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+      }]);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(`http://${window.location.hostname}:8000/api/voice/chat`, {
         method: 'POST',
@@ -141,8 +158,6 @@ export default function VoiceAI() {
         time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
       }]);
     } catch (err) {
-      console.warn('Backend server not reachable, using client-side AI reply.');
-      await new Promise((resolve) => setTimeout(resolve, 600));
       const replyText = getFallbackVoiceReply(userText);
       setMessages(prev => [...prev, {
         role: 'ai',
