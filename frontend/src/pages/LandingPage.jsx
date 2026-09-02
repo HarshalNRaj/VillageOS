@@ -74,7 +74,7 @@ export default function LandingPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          A voice-enabled, localized operating system delivering instant crop diagnostics, personalized government assistance schemes, and real-time community services.
+          A localized operating system delivering instant crop diagnostics, personalized government assistance schemes, and real-time community services.
         </motion.p>
 
         <motion.div 

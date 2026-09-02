@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import krishi_ai, scheme_ai, voice_ai
+from api import krishi_ai, scheme_ai
 
 app = FastAPI(
     title="VillageOS Lite API",
@@ -19,7 +19,6 @@ app.add_middleware(
 
 app.include_router(krishi_ai.router, prefix="/api/krishi", tags=["Krishi AI"])
 app.include_router(scheme_ai.router, prefix="/api/scheme", tags=["Scheme AI"])
-app.include_router(voice_ai.router, prefix="/api/voice", tags=["Voice AI"])
 
 @app.get("/")
 async def root():
