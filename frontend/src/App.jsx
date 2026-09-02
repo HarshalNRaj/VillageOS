@@ -6,7 +6,6 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import KrishiAI from './pages/KrishiAI';
 import SchemeAI from './pages/SchemeAI';
-import VoiceAI from './pages/VoiceAI';
 import About from './pages/About';
 import Education from './pages/Education';
 import HealthCare from './pages/HealthCare';
@@ -32,7 +31,6 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/krishi-ai" element={<KrishiAI />} />
             <Route path="/scheme-ai" element={<SchemeAI />} />
-            <Route path="/voice-ai" element={<VoiceAI />} />
             <Route path="/education" element={<Education />} />
             <Route path="/healthcare" element={<HealthCare />} />
             <Route path="/livelihood" element={<Livelihood />} />

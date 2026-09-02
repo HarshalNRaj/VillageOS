@@ -17,7 +17,6 @@ const navItems = [
 const aiItems = [
   { name: 'Krishi AI', path: '/krishi-ai', icon: Leaf },
   { name: 'Scheme AI', path: '/scheme-ai', icon: FileText },
-  { name: 'Voice AI', path: '/voice-ai', icon: Mic },
 ];
 
 const ruralItems = [

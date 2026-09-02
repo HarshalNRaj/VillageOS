@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Leaf, Shield, Mic, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Leaf, Shield, Briefcase, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const containerVariants = {
@@ -116,9 +116,9 @@ export default function LandingPage() {
             desc="Demographic-based government scheme matching engine with instant eligibility scoring."
           />
           <FeatureCard 
-            icon={<Mic className="w-6 h-6 text-accent-purple" />}
-            title="Voice Assistant"
-            desc="Bilingual voice support in Kannada & English for intuitive hands-free access."
+            icon={<Briefcase className="w-6 h-6 text-accent-purple" />}
+            title="Employment Hub"
+            desc="Explore rural & urban job listings, MGNREGA work, and technical skill programs."
           />
         </motion.div>
       </main>
