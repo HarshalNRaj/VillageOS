@@ -2,7 +2,7 @@
 
 "Digital AI infrastructure for rural communities."
 
-VillageOS Lite is an award-winning, fully responsive AI-powered web platform built to assist rural farmers and citizens. It features crop disease detection (KrishiAI), government scheme recommendations (SchemeAI), and a multilingual voice assistant.
+VillageOS Lite is fully responsive AI-powered web platform built to assist rural farmers and citizens. It features crop disease detection (KrishiAI), government scheme recommendations (SchemeAI), and a multilingual voice assistant.
 
 ## Tech Stack
 - **Frontend**: React, Vite, Tailwind CSS, Framer Motion, Lucide React
