@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, LayoutDashboard, Leaf, FileText, Mic, GraduationCap, Heart, Briefcase, TrendingUp, Menu, X, ArrowLeft } from 'lucide-react';
+import { Home, LayoutDashboard, Leaf, FileText, GraduationCap, Heart, Briefcase, TrendingUp, Menu, X, ArrowLeft, LogOut, LogIn, UserPlus, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useAuth } from '../context/AuthContext';
 
 function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -30,6 +31,7 @@ export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, logout, openAuthModal } = useAuth();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -120,15 +122,44 @@ export default function Sidebar() {
         ))}
       </nav>
       
-      <div className="p-4 border-t border-white/5">
-        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-          <div className="flex items-center gap-3 mb-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping absolute"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-            <span className="text-xs text-gray-200 font-bold">System Online</span>
+      <div className="p-4 border-t border-white/5 space-y-3">
+        {user ? (
+          <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between shadow-lg">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-400 to-accent-cyan flex items-center justify-center text-dark-950 font-black text-sm flex-shrink-0 shadow-md">
+                {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-white truncate">{user.name}</p>
+                <p className="text-[10px] text-primary-400 font-semibold truncate">{user.role || 'Citizen'}</p>
+              </div>
+            </div>
+            <button
+              onClick={logout}
+              className="p-2 rounded-xl text-gray-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
-          <p className="text-[10px] text-gray-500">Connected to KrishiNet Local Node</p>
-        </div>
+        ) : (
+          <div className="space-y-2">
+            <button
+              onClick={() => openAuthModal('login')}
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-primary-500 to-accent-cyan text-dark-950 font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg hover:shadow-primary-500/20 transition-all"
+            >
+              <LogIn className="w-4 h-4" />
+              Sign In
+            </button>
+            <button
+              onClick={() => openAuthModal('register')}
+              className="w-full py-2 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-xs flex items-center justify-center gap-2 border border-white/5 transition-all"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              Create Account
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -150,9 +181,27 @@ export default function Sidebar() {
           </div>
           <span className="font-extrabold text-sm text-white tracking-wider">VillageOS</span>
         </div>
-        <button onClick={toggleSidebar} className="p-2 text-gray-400 hover:text-white transition-colors">
-          <Menu className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          {user ? (
+            <button
+              onClick={logout}
+              className="p-2 rounded-xl text-gray-400 hover:text-rose-400"
+              title="Sign Out"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          ) : (
+            <button
+              onClick={() => openAuthModal('login')}
+              className="px-3 py-1.5 rounded-xl bg-primary-500/20 text-primary-400 font-bold text-xs border border-primary-500/30"
+            >
+              Sign In
+            </button>
+          )}
+          <button onClick={toggleSidebar} className="p-2 text-gray-400 hover:text-white transition-colors">
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* Mobile Sidebar Overlay */}

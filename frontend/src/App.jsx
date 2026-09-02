@@ -12,7 +12,11 @@ import HealthCare from './pages/HealthCare';
 import Livelihood from './pages/Livelihood';
 import EmploymentHub from './pages/EmploymentHub';
 
-function App() {
+import { AuthProvider } from './context/AuthContext';
+import AuthModal from './components/AuthModal';
+import ToastNotification from './components/ToastNotification';
+
+function AppContent() {
   const location = useLocation();
   const isLanding = location.pathname === '/';
 
@@ -39,7 +43,18 @@ function App() {
           </Routes>
         </AnimatePresence>
       </main>
+
+      <AuthModal />
+      <ToastNotification />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

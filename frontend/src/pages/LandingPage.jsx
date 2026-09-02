@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Leaf, Shield, Briefcase, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { useAuth } from '../context/AuthContext';
+import { LogIn, LogOut, User } from 'lucide-react';
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -18,13 +21,12 @@ const itemVariants = {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { user, logout, openAuthModal } = useAuth();
 
   return (
-    <div className="min-h-screen bg-dark-950 grid-bg overflow-hidden relative">
-      {/* Background gradients/blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse-slow"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent-blue/10 rounded-full blur-[140px] pointer-events-none animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] bg-accent-purple/5 rounded-full blur-[120px] pointer-events-none animate-float"></div>
+    <div className="min-h-screen bg-dark-950 text-white relative overflow-hidden flex flex-col justify-between">
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-primary-600/20 via-accent-cyan/10 to-accent-indigo/10 rounded-full blur-[140px] pointer-events-none animate-pulse-slow"></div>
 
       {/* Navbar */}
       <nav className="relative z-10 flex justify-between items-center py-6 px-6 lg:px-20 border-b border-white/5 bg-dark-950/40 backdrop-blur-md">
@@ -37,12 +39,38 @@ export default function LandingPage() {
             <span className="text-[9px] font-bold text-primary-400 tracking-widest uppercase block -mt-1">Rural AI Infrastructure</span>
           </div>
         </div>
-        <button 
-          onClick={() => navigate('/dashboard')}
-          className="px-6 py-2.5 rounded-full bg-white/5 hover:bg-primary-500 hover:text-white border border-white/10 hover:border-primary-500 transition-all duration-300 font-bold text-sm text-gray-300 shadow-lg hover:shadow-primary-500/20"
-        >
-          Launch Portal
-        </button>
+
+        <div className="flex items-center gap-4">
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:inline-block text-xs font-bold text-gray-300">
+                Hi, <span className="text-primary-400">{user.name}</span>
+              </span>
+              <button
+                onClick={logout}
+                className="p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 border border-white/10 transition-all"
+                title="Sign Out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => openAuthModal('login')}
+              className="px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-xs font-bold transition-all flex items-center gap-2"
+            >
+              <LogIn className="w-3.5 h-3.5 text-primary-400" />
+              Sign In
+            </button>
+          )}
+
+          <button 
+            onClick={() => navigate('/dashboard')}
+            className="px-6 py-2.5 rounded-full bg-gradient-to-r from-primary-500 to-accent-cyan hover:from-primary-400 hover:to-accent-blue text-dark-950 font-black text-xs md:text-sm shadow-lg hover:shadow-primary-500/20 transition-all duration-300"
+          >
+            Launch Portal
+          </button>
+        </div>
       </nav>
 
       {/* Hero Section */}
