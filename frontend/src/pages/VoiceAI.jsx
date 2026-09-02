@@ -3,12 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Send, Volume2, Bot, User, Loader2, Sparkles } from 'lucide-react';
 
 const INTENTS = [
+  // Link / Portal Requests
+  [
+    ["link", "links", "url", "urls", "website", "websites", "portal", "portals", "site", "sites", "where to apply", "how to apply"],
+    "Here are official links & portals:\n• AICTE Internship Portal: https://internship.aicte-india.org\n• SWAYAM Free Courses: https://swayam.gov.in\n• NPTEL Certifications: https://nptel.ac.in\n• DIKSHA Free Education: https://diksha.gov.in\n• PM Kisan Scheme: https://pmkisan.gov.in\n• e-Sanjeevani OPD: https://esanjeevaniopd.in"
+  ],
   // Engineering / Tech / Internships
   [
     [
       "internship", "internships", "intern", "intership", "engineering", "engineer", "enginering", "engg", "btech", "b.tech", "be", "b.e", "diploma", "college", "graduate", "fresher", "career", "it job", "tech", "student", "students", "opportunity", "opportunities", "oppurtunity", "oppurtunities"
     ],
-    "For engineering & technical students: You can apply for Govt & private internships on the AICTE Internship Portal (internship.aicte-india.org) and Digital India Internship Scheme. Check out free certifications on NPTEL/SWAYAM and explore active vacancies in the Employment Hub module of VillageOS!"
+    "For engineering & technical students: Apply for Govt & private internships on the AICTE Internship Portal (https://internship.aicte-india.org) and Digital India Scheme. Explore free certifications on SWAYAM (https://swayam.gov.in) and NPTEL (https://nptel.ac.in), or check the Employment Hub module in VillageOS!"
   ],
   // Jobs / employment
   [
@@ -48,7 +53,7 @@ const INTENTS = [
   // Government schemes
   [
     ["scheme", "schemes", "yojana", "subsidy", "government", "pm kisan", "loan", "credit"],
-    "PM-KISAN scheme gives ₹6,000 per year directly to your bank account in 3 installments. Register at pmkisan.gov.in or your nearest CSC center."
+    "PM-KISAN scheme gives ₹6,000 per year directly to your bank account in 3 installments. Register at https://pmkisan.gov.in or your nearest CSC center."
   ],
   // Market / price / mandi
   [
@@ -58,12 +63,12 @@ const INTENTS = [
   // Education / Study
   [
     ["education", "school", "study", "scholarship", "scholarships", "course", "diksha"],
-    "Students can access free NCERT books & lectures on DIKSHA portal (diksha.gov.in) and national scholarships on scholarships.gov.in."
+    "Students can access free NCERT books & lectures on DIKSHA portal (https://diksha.gov.in) and national scholarships on https://scholarships.gov.in."
   ],
   // Healthcare / hospital
   [
     ["hospital", "doctor", "medicine", "sick", "health", "fever", "ambulance"],
-    "Call 108 for a free ambulance in any emergency. For free online doctor consultation, use the e-Sanjeevani app or visit esanjeevaniopd.in."
+    "Call 108 for a free ambulance in any emergency. For free online doctor consultation, visit e-Sanjeevani OPD at https://esanjeevaniopd.in."
   ],
   // Banking / finance
   [
@@ -78,7 +83,7 @@ const INTENTS = [
   // Greetings (placed AT THE END with exact word boundary matching)
   [
     ["hello", "hi", "namaste", "namaskara", "hey"],
-    "Namaskara! I am your VillageOS AI assistant. Ask me about farming, health, education, engineering internships, jobs, government schemes, or market prices. How can I help you today?"
+    "Namaskara! I am your VillageOS AI assistant. Ask me about farming, health, education, engineering internships, links, jobs, government schemes, or market prices. How can I help you today?"
   ]
 ];
 
@@ -96,8 +101,31 @@ function getFallbackVoiceReply(text) {
       }
     }
   }
-  return "Namaskara! I am ready to help. You can ask about engineering internships, crop diseases, seeds, scholarships, MGNREGA jobs, hospital services, or government schemes.";
+  return "Namaskara! I am ready to help. You can ask for internship links (https://internship.aicte-india.org), crop diseases, scholarships, MGNREGA jobs, hospital services, or government schemes.";
 }
+
+// Helper to render text with clickable links
+const renderFormattedMessage = (text) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+
+  return parts.map((part, i) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent-cyan font-bold underline hover:text-white transition-colors"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+};
 
 export default function VoiceAI() {
   const [isListening, setIsListening] = useState(false);
@@ -238,7 +266,7 @@ export default function VoiceAI() {
               </div>
               <div className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                 <div className={`p-4 rounded-2xl text-xs md:text-sm leading-relaxed ${msg.role === 'user' ? 'bg-accent-blue/20 text-accent-cyan rounded-tr-none border border-accent-blue/30' : 'bg-white/[0.02] text-gray-200 rounded-tl-none border border-white/5'}`}>
-                  <p>{msg.text}</p>
+                  <p className="whitespace-pre-line">{renderFormattedMessage(msg.text)}</p>
                 </div>
                 <div className="flex items-center gap-2 mt-1 px-1">
                   <span className="text-[10px] text-gray-500 font-mono">{msg.time}</span>
